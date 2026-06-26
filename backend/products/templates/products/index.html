@@ -1,8 +1,103 @@
-<h1>This is the index page</h1>
+{% extends 'products/base.html' %}
 
-{% for product in products %}
-    <p>{{product.name}}</p>
-    <img src="{{product.image.url}}" alt="">
-    <p>{{product.price}}</p>
-    <p>{{product.description}}</p>
-{% endfor %}
+{% block body %}
+
+<div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-bold text-gray-900">
+                Discover Amazing Products
+            </h1>
+
+            <p class="mt-5 text-lg text-gray-500 max-w-2xl mx-auto">
+                Premium quality products curated just for you.
+            </p>
+        </div>
+
+        <!-- Products Grid -->
+
+        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+            {% for product in products %}
+
+            <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden group">
+
+                <!-- Product Image -->
+
+                <div class="overflow-hidden bg-gray-100">
+
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                        class="w-full h-72 object-cover group-hover:scale-105 transition duration-500"
+                    >
+
+                </div>
+
+                <!-- Product Info -->
+
+                <div class="p-6">
+
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">
+                        {{ product.name }}
+                    </h2>
+
+                    <p class="text-gray-500 text-sm line-clamp-2">
+                        {{ product.description }}
+                    </p>
+
+                    <div class="flex items-center justify-between mt-6">
+
+                        <span class="text-2xl font-bold text-gray-900">
+                            ₹{{ product.price }}
+                        </span>
+
+                        {% if product.stock > 0 %}
+                            <span class="text-green-600 text-sm font-medium">
+                                In Stock
+                            </span>
+                        {% else %}
+                            <span class="text-red-500 text-sm font-medium">
+                                Out of Stock
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <a href="{% url 'detail' product.slug %}"
+                       class="mt-6 block w-full text-center bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition">
+
+                        View Product
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-span-full text-center py-20">
+
+                <h2 class="text-3xl font-semibold text-gray-700">
+                    No Products Available
+                </h2>
+
+                <p class="text-gray-500 mt-3">
+                    Please check back later.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

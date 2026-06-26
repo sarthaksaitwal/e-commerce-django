@@ -17,7 +17,7 @@ class Product(models.Model):
             base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
-            while Product.objects.filter(slug=slug).exists:
+            while Product.objects.filter(slug=slug).exists():
                 slug = f"{base_slug}-counter"
                 counter += 1 
             self.slug = slug
