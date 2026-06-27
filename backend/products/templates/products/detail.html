@@ -14,10 +14,7 @@
 
                 <div class="bg-white rounded-3xl overflow-hidden shadow">
 
-                    <img
-                        src="{{ product.image.url }}"
-                        alt="{{ product.name }}"
-                        class="w-full h-[650px] object-cover">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-[650px] object-cover">
 
                 </div>
 
@@ -43,13 +40,15 @@
 
                     {% if product.stock > 0 %}
 
-                    <span class="inline-flex items-center rounded-full bg-green-100 text-green-700 px-4 py-2 text-sm font-medium">
+                    <span
+                        class="inline-flex items-center rounded-full bg-green-100 text-green-700 px-4 py-2 text-sm font-medium">
                         In Stock ({{ product.stock }})
                     </span>
 
                     {% else %}
 
-                    <span class="inline-flex items-center rounded-full bg-red-100 text-red-700 px-4 py-2 text-sm font-medium">
+                    <span
+                        class="inline-flex items-center rounded-full bg-red-100 text-red-700 px-4 py-2 text-sm font-medium">
                         Out of Stock
                     </span>
 
@@ -61,23 +60,53 @@
                     {{ product.description }}
                 </p>
 
-                <div class="flex gap-4 mt-10">
+                <div class="flex items-end gap-4 mt-10">
 
-                    <button
-                        class="flex-1 bg-black text-white py-4 rounded-xl hover:bg-gray-900 transition">
+                    <!-- Add to Cart -->
+
+                    <button id="atc" value="{{ product.id }}"
+                        class="flex-1 h-14 bg-black text-white rounded-xl hover:bg-gray-900 transition">
 
                         Add to Cart
 
                     </button>
 
-                    <button
-                        class="px-8 border rounded-xl hover:bg-gray-100 transition">
+                    <!-- Quantity -->
 
-                        ♥ Wishlist
+                    <div>
 
-                    </button>
+                        <label class="block text-xs font-medium text-gray-500 mb-2">
+                            Qty
+                        </label>
+
+                        <div class="flex items-center border rounded-xl overflow-hidden h-14">
+
+                            <button type="button" id="decrease"
+                                class="w-10 h-full hover:bg-gray-100 text-lg font-medium">
+                                −
+                            </button>
+
+                            <input id="quantity" type="number" value="1" min="1" max="{{ product.stock }}"
+                                class="w-10 text-center outline-none border-0 bg-transparent" readonly>
+
+                            <button type="button" id="increase"
+                                class="w-10 h-full hover:bg-gray-100 text-lg font-medium">
+                                +
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
+
+                <!-- Wishlist -->
+
+                <button class="mt-4 w-full h-14 border rounded-xl hover:bg-gray-100 transition">
+
+                    ♥ Wishlist
+
+                </button>
 
                 <div class="border-t mt-12 pt-8">
 
@@ -168,4 +197,36 @@
 
 </div> -->
 
-{% endblock %}
+    <script>
+        $("#increase").click(function () {
+            let qty = parseInt($("#quantity").val());
+            if (qty < "{{ product.stock }}") {
+                $("#quantity").val(qty + 1);
+            }
+        });
+
+        $("#decrease").click(function () {
+            let qty = parseInt($("#quantity").val());
+            if (qty > 1) {
+                $("#quantity").val(qty - 1);
+            }
+        });
+
+
+        $(document).on("click", "#atc", function (e) {
+            console.log("Add to cart button clicked");
+            console.log($("#atc").val());
+            console.log($("#quantity").val());
+            $.ajax({
+                type: "POST",
+                url: "{% url 'cart_add' %}",
+                data: {
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    product_id: $("#atc").val(),
+                    product_quantity: $("#quantity").val()
+                }
+            })
+        })
+    </script>
+
+    {% endblock %}
